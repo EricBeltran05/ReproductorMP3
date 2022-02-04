@@ -69,7 +69,9 @@ public class MP3PlayerController {
     }
 
     public void initController() {
+        
         v.getPlayPause().setOnAction((e) -> playPausePlayer());
+        
 
         v.getSlider().maxProperty().bind(Bindings.createDoubleBinding(
                 () -> player.getTotalDuration().toSeconds(),
@@ -94,6 +96,20 @@ public class MP3PlayerController {
         v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> player.stop());
         v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> selectSong());
         v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> sliderController());
+        
+        //Le damos una acción al botón Forward
+        v.getForward().setOnAction((e) -> {
+                v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> player.stop());
+                playNext();
+                sliderController();
+        });
+        
+        //Le damos una acción al botón Back
+        v.getBack().setOnAction((e) -> {
+                v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> player.stop());
+                playPrev();
+                sliderController();
+        });
 
     }
 
@@ -128,6 +144,43 @@ public class MP3PlayerController {
             );
             player.pause();
         }
+    }
+    
+    private void playNext(){
+        //Cogemos la posicion +1 de la canción seleccionada
+        trackPosInPlayList = trackPosInPlayList + 1;
+        
+        //If para volver a empezar al llegar al final
+        if(trackPosInPlayList > songList.size() - 1){
+        trackPosInPlayList = 0;
+        }
+        currentTrack = songList.get(trackPosInPlayList);
+        v.getCurrentTitle().setText(currentTrack.getTitle());
+        v.getCurrentArtist().setText(currentTrack.getArtist());
+        v.getTotalTime().setText(currentTrack.getTimeFormat());
+        loadCurrentTrack();
+        v.getAudioControls().getChildren().add(v.getMedia());
+        songList.set(trackPosInPlayList, currentTrack);
+        
+        playPausePlayer();
+    }
+    
+    private void playPrev(){
+        //Cogemos la posición -1 de la canción seleccionada
+        trackPosInPlayList = trackPosInPlayList - 1;
+        
+        //If para volver al final al llegar a la posición -1
+        if(trackPosInPlayList < 0){
+        trackPosInPlayList = songList.size() - 1;
+        }
+        currentTrack = songList.get(trackPosInPlayList);
+        v.getCurrentTitle().setText(currentTrack.getTitle());
+        v.getCurrentArtist().setText(currentTrack.getArtist());
+        v.getTotalTime().setText(currentTrack.getTimeFormat());
+        loadCurrentTrack();
+        v.getAudioControls().getChildren().add(v.getMedia());
+        
+        playPausePlayer();
     }
 
     private void loadCurrentTrack() {
