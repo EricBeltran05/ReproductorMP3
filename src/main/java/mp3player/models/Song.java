@@ -2,19 +2,33 @@
 package mp3player.models;
 
 import javafx.util.Duration;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+
+@XmlRootElement(name = "songs")
+@XmlAccessorType(XmlAccessType.NONE)
 /**
  *
  * @author Cristòfol-Lluís Thwaite
  */
 public class Song {
     
+    @XmlAttribute
     private String title;
-    private String genre;
+    @XmlElement(name = "genere")
+    private String genere;
+    @XmlAttribute
     private String artist;
+    @XmlElement(name = "album")
     private String album;
+    @XmlElement(name = "time")
     private Duration time;
     private String timeFormat;
+    @XmlElement(name = "songPath")
     private String songPath;
     
     public Song() {
@@ -29,7 +43,7 @@ public class Song {
             String songPath
     ) {
         this.title = title;
-        this.genre = genre;
+        this.genere = genre;
         this.artist = artist;
         this.album = album;
         this.time = time;
@@ -46,11 +60,11 @@ public class Song {
     }
 
     public String getGenre() {
-        return genre;
+        return genere;
     }
 
     public void setGenre(String genre) {
-        this.genre = genre;
+        this.genere = genre;
     }
 
     public String getArtist() {
@@ -91,7 +105,7 @@ public class Song {
 
     @Override
     public String toString() {
-        return "Song{" + "title=" + title + ", genre=" + genre + ", artist=" 
+        return "Song{" + "title=" + title + ", genre=" + genere + ", artist=" 
                 + artist + ", album=" + album + ", time=" + time 
                 + ", songPath=" + songPath + '}';
     }

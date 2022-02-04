@@ -1,4 +1,3 @@
-
 package mp3player.views;
 
 import de.jensd.fx.glyphs.GlyphsDude;
@@ -12,6 +11,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -24,7 +24,7 @@ import mp3player.models.Song;
  * @author Cristòfol-Lluís Thwaite
  */
 public class MP3PlayerView {
-    
+
     private final SplitPane rootPane;
     private final SplitPane playListPane;
     private final VBox playLists;
@@ -56,18 +56,22 @@ public class MP3PlayerView {
     private final Button shuffle;
     private final Button repeat;
     private MediaView media;
-    
+
+    //MODIFICACIÓ
+    private final Label newPlayListTitle;
+    private final TextField newPlayListTitleField;
+
     public MP3PlayerView() {
         rootPane = new SplitPane();
         rootPane.setOrientation(Orientation.VERTICAL);
         rootPane.setDividerPositions(0.85);
         rootPane.setMinHeight(720.0);
         rootPane.setMinWidth(1280.0);
-        
+
         playListPane = new SplitPane();
         playListPane.setOrientation(Orientation.HORIZONTAL);
         playListPane.setDividerPositions(0.2);
-        
+
         playLists = new VBox(3);
         playListsTitle = new Label("Playlists");
         playListsTitle.setId("playListsTitle");
@@ -95,7 +99,7 @@ public class MP3PlayerView {
         playLists.getChildren().addAll(
                 playListsTitle, playListsList, playListsControls
         );
-        
+
         trackTable = new TableView<>();
         trackTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         title = new TableColumn<>("Title");
@@ -104,17 +108,17 @@ public class MP3PlayerView {
         album = new TableColumn<>("Album");
         time = new TableColumn<>("Time");
         trackTable.getColumns().addAll(title, genre, artist, album, time);
-        
+
         playListPane.getItems().addAll(playLists, trackTable);
         //Constrain max width of left component binding it to parent pane
         playLists.maxWidthProperty().bind(
                 playListPane.widthProperty().multiply(0.25)
         );
-        
+
         audioControls = new HBox(6);
         audioControls.setMinHeight(108.0);
         audioControls.setAlignment(Pos.CENTER);
-        
+
         trackControls = new HBox(3);
         trackControls.getStyleClass().add("padding-10");
         trackControls.setAlignment(Pos.CENTER);
@@ -136,7 +140,7 @@ public class MP3PlayerView {
                 FontAwesomeIcon.FAST_FORWARD, "10px")
         );
         trackControls.getChildren().addAll(back, playPause, forward);
-        
+
         currentTrack = new VBox(2);
         currentTrack.setAlignment(Pos.CENTER);
         currentTitle = new Label("Current Song Title");
@@ -144,18 +148,19 @@ public class MP3PlayerView {
         currentArtist = new Label("Current Artist");
         currentArtist.setId("currentArtist");
         currentTrack.getChildren().addAll(currentTitle, currentArtist);
-        
+
         slider = new Slider();
         HBox.setHgrow(slider, Priority.ALWAYS);
         slider.setId("slider");
-        
+        slider.autosize();
+
         trackTimes = new HBox(3);
         trackTimes.setAlignment(Pos.CENTER);
         currentTime = new Label("00:00");
         separator = new Label("/");
         totalTime = new Label("00:00");
         trackTimes.getChildren().addAll(currentTime, separator, totalTime);
-        
+
         playListControls = new HBox(2);
         playListControls.setAlignment(Pos.CENTER);
         playListControls.getStyleClass().add("padding-10");
@@ -166,26 +171,38 @@ public class MP3PlayerView {
         repeat.setPrefSize(25.0, 30.0);
         repeat.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.REPEAT, "14px"));
         playListControls.getChildren().addAll(shuffle, repeat);
-        
+
         audioControls.getChildren().addAll(
-                trackControls, 
-                currentTrack, 
-                slider, 
+                trackControls,
+                currentTrack,
+                slider,
                 trackTimes,
                 playListControls
         );
-       
+
         rootPane.getItems().addAll(playListPane, audioControls);
         //Constrain min height of bottom component binding it to paren pane
         audioControls.maxHeightProperty().bind(
                 rootPane.heightProperty().multiply(0.15)
         );
+
+        //MODIFICACIÓ
+        newPlayListTitle = new Label("New PlayList");
+        newPlayListTitle.setId("newPlayList");
+        newPlayListTitle.setVisible(false);
+        newPlayListTitle.getStyleClass().add("padding-10");
+        newPlayListTitle.setMaxHeight(61.0);
+
+        newPlayListTitleField = new TextField("");
+        newPlayListTitleField.setVisible(false);
+        newPlayListTitleField.getStyleClass().add("padding-10");
+        newPlayListTitleField.setMaxHeight(61.0);
     }
-    
+
     public SplitPane getRootPane() {
         return rootPane;
     }
-    
+
     public SplitPane getPlayListPane() {
         return playListPane;
     }
@@ -213,11 +230,11 @@ public class MP3PlayerView {
     public Button getDeletePlayList() {
         return deletePlayList;
     }
-    
+
     public TableView<Song> getTrackTable() {
         return trackTable;
     }
-    
+
     public TableColumn<Song, String> getTitle() {
         return title;
     }
@@ -237,7 +254,7 @@ public class MP3PlayerView {
     public TableColumn<Song, String> getTime() {
         return time;
     }
-    
+
     public HBox getAudioControls() {
         return audioControls;
     }
@@ -301,12 +318,22 @@ public class MP3PlayerView {
     public Button getRepeat() {
         return repeat;
     }
-    
+
     public MediaView getMedia() {
         return media;
     }
-    
+
     public void setMedia(MediaView media) {
         this.media = media;
+    }
+
+    //MODIFICACIÓ
+    public TextField setPlayListTitleField() {
+        return newPlayListTitleField;
+    }
+
+    public Label setPlayListTitle() {
+        return newPlayListTitle;
+
     }
 }

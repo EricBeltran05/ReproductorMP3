@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<songs>
-    
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<songs title="Like me better" artist="Lauv">
+    <genere>Pop</genere>
+    <album>How I'm feeling</album>
+    <time/>
+    <songPath>audios/Like_Me_Better.mp3</songPath>
 </songs>
