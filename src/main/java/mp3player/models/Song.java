@@ -1,6 +1,7 @@
 
 package mp3player.models;
 
+import java.io.Serializable;
 import javafx.util.Duration;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Cristòfol-Lluís Thwaite
  */
-public class Song {
+public class Song implements Serializable{
     
     @XmlAttribute
     private String title;
@@ -106,7 +107,7 @@ public class Song {
     @Override
     public String toString() {
         return "Song{" + "title=" + title + ", genre=" + genere + ", artist=" 
-                + artist + ", album=" + album + ", time=" + time 
+                + artist + ", album=" + album + ", time=" + time.toString()
                 + ", songPath=" + songPath + '}';
     }
     

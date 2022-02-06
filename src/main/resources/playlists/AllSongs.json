@@ -1,0 +1,39 @@
+{
+  "title": "All Songs",
+  "songList": [
+    {
+      "title": "Hells Bells",
+      "genere": "Rock",
+      "artist": "AC/DC",
+      "album": "Back in Black",
+      "time": {
+        "millis": 311000.0
+      },
+      "timeFormat": "05:11",
+      "songPath": "audios/hells_bells.mp3"
+    },
+    {
+      "title": "Closer",
+      "genere": "Pop",
+      "artist": "The Chainsmokers ft. Hailey",
+      "album": "Single",
+      "time": {
+        "millis": 262000.0
+      },
+      "timeFormat": "04:22",
+      "songPath": "audios/Closer.mp3"
+    },
+    {
+      "title": "Like me better",
+      "genere": "Pop",
+      "artist": "Lauv",
+      "album": "How I\u0027m feeling",
+      "time": {
+        "millis": 197000.0
+      },
+      "timeFormat": "03:17",
+      "songPath": "audios/Like_Me_Better.mp3"
+    }
+  ],
+  "playlistPath": "E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\playlists\\All Songs.json"
+}

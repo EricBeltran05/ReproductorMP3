@@ -10,17 +10,16 @@ import javafx.stage.Stage;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import mp3player.models.Song;
 import mp3player.views.MP3PlayerView;
 import mp3player.controllers.MP3PlayerController;
+import mp3player.models.PlayList;
 
 /**
  * JavaFX App
  */
 public class App extends Application {
-
-    private static String songsXML = "E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\configuration\\songs.xml";
-    private static File file = new File("E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\configuration\\songs.xml");
 
     @Override
     public void start(Stage stage) {
@@ -42,7 +41,8 @@ public class App extends Application {
     }
 
     private static List<Song> startingSongList() {
-        List<Song> songList = new ArrayList<>();
+
+        List<Song> lista = new ArrayList<>();
         Song s = new Song(
                 "Hells Bells",
                 "Rock",
@@ -51,8 +51,6 @@ public class App extends Application {
                 Duration.seconds(311),
                 "audios/hells_bells.mp3"
         );
-        songList.add(s);
-
         Song s1 = new Song(
                 "Closer",
                 "Pop",
@@ -61,8 +59,6 @@ public class App extends Application {
                 Duration.seconds(262),
                 "audios/Closer.mp3"
         );
-        songList.add(s1);
-
         Song s2 = new Song(
                 "Like me better",
                 "Pop",
@@ -71,21 +67,10 @@ public class App extends Application {
                 Duration.seconds(197),
                 "audios/Like_Me_Better.mp3"
         );
-        songList.add(s2);
+        lista.add(s);
+        lista.add(s1);
+        lista.add(s2);
 
-        /*try {
-            JAXBContext context = JAXBContext.newInstance(Song.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            marshaller.marshal(s, file);
-            marshaller.marshal(s1, file);
-            marshaller.marshal(s2, file);
-
-        } catch (JAXBException ex) {
-            System.err.println("ERROR AMB EL SERIALITZADOR JAXB: " + ex.getMessage());
-        }*/
-
-        return songList;
+        return lista;
     }
 }

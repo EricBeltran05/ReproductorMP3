@@ -152,7 +152,7 @@ public class MP3PlayerView {
         slider = new Slider();
         HBox.setHgrow(slider, Priority.ALWAYS);
         slider.setId("slider");
-        slider.autosize();
+        //slider.autosize();
 
         trackTimes = new HBox(3);
         trackTimes.setAlignment(Pos.CENTER);

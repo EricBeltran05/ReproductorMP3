@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<songs title="Like me better" artist="Lauv">
-    <genere>Pop</genere>
-    <album>How I'm feeling</album>
-    <time/>
-    <songPath>audios/Like_Me_Better.mp3</songPath>
-</songs>
+<MP3>
+    <songs>
+        <song title="Hells Bells" artist="AC/DC">
+            <genere>Rock</genere>
+            <album>Back in Black</album>
+            <time/>
+            <songPath>audios/hells_bells.mp3</songPath>
+        </song>
+        <song title="Closer" artist="The Chainsmokers ft. Hailey">
+            <genere>Pop</genere>
+            <album>Single</album>
+            <time/>
+            <songPath>audios/Closer.mp3</songPath>
+        </song>
+        <song title="Like me better" artist="Lauv">
+            <genere>Pop</genere>
+            <album>How I'm feeling</album>
+            <time/>
+            <songPath>audios/Like_Me_Better.mp3</songPath>
+        </song>
+    </songs>
+    <playlists>
+        <playlist title="All Songs">
+            <songList title="Hells Bells" artist="AC/DC">
+                <genere>Rock</genere>
+                <album>Back in Black</album>
+                <time/>
+                <songPath>audios/hells_bells.mp3</songPath>
+            </songList>
+            <songList title="Closer" artist="The Chainsmokers ft. Hailey">
+                <genere>Pop</genere>
+                <album>Single</album>
+                <time/>
+                <songPath>audios/Closer.mp3</songPath>
+            </songList>
+            <songList title="Like me better" artist="Lauv">
+                <genere>Pop</genere>
+                <album>How I'm feeling</album>
+                <time/>
+                <songPath>audios/Like_Me_Better.mp3</songPath>
+            </songList>
+            <path>E:\DAM 2\Pack 3\mp3-player-backbone\src\main\resources\playlists\All Songs.json</path>
+        </playlist>
+    </playlists>
+</MP3>

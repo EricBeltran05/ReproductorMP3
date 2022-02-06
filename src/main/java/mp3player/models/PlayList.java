@@ -3,15 +3,26 @@ package mp3player.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Cristòfol-Lluís Thwaite Rivas
  */
+@XmlRootElement(name = "playlist")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class PlayList {
     
+    @XmlAttribute
     private String title;
+    
     private List<Song> songList;
+    @XmlElement(name = "path")
+    private String playlistPath; 
     
     public PlayList() {
         songList = new ArrayList<>();
@@ -20,6 +31,7 @@ public class PlayList {
     public PlayList(String title, List<Song> songList) {
         this.title = title;
         this.songList = songList;
+        this.playlistPath = "E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\playlists\\"+title+".json";
     }
     
     public String getTitle() {
