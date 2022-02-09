@@ -33,6 +33,7 @@ import mp3player.views.MP3PlayerView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -147,6 +148,34 @@ public class MP3PlayerController {
             //v.getSlider().adjustValue(0);
             sliderController();
         });
+        
+        //Acción para el botón shuffle y cambiamos el color del boton al hacer click
+        v.getShuffle().setOnAction((e) -> {
+            if (v.getShuffle().getStyle() == "-fx-background-color: white") {
+                v.getShuffle().setStyle("-fx-background-color: gray");
+            } else {
+                v.getShuffle().setStyle("-fx-background-color: white");
+            }
+        });
+
+        v.getRepeat().setOnAction((e) -> {
+            if (v.getRepeat().getStyle() == "-fx-background-color: white") {
+                v.getRepeat().setStyle("-fx-background-color: gray");
+            } else {
+                v.getRepeat().setStyle("-fx-background-color: white");
+            }
+        });
+        
+        player.setOnEndOfMedia(() -> {
+            if(v.getRepeat().getStyle() == "-fx-background-color: white"){
+            player.stop();
+            player.play();
+            sliderController();
+            }else {
+            playNext();
+            //player.play();
+            sliderController();}
+        });
 
         v.getAddPlayList().setOnAction((eh) -> {
             createPlayList();
@@ -213,7 +242,14 @@ public class MP3PlayerController {
 
     private void playNext() {
         //Cogemos la posicion +1 de la canción seleccionada
-        trackPosInPlayList = trackPosInPlayList + 1;
+        //trackPosInPlayList = trackPosInPlayList + 1;
+        
+
+        if (v.getShuffle().getStyle() == "-fx-background-color: white") {
+            trackPosInPlayList = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
+        } else {
+            trackPosInPlayList = trackPosInPlayList + 1;
+        }
 
         //If para volver a empezar al llegar al final
         if (trackPosInPlayList > songList.size() - 1) {
@@ -224,15 +260,24 @@ public class MP3PlayerController {
         v.getCurrentArtist().setText(currentTrack.getArtist());
         v.getTotalTime().setText(currentTrack.getTimeFormat());
         loadCurrentTrack();
-        v.getAudioControls().getChildren().add(v.getMedia());
+        //v.getAudioControls().getChildren().add(v.getMedia());
         songList.set(trackPosInPlayList, currentTrack);
-
-        playPausePlayer();
+        
+        if (v.getPlayPause().getStyleClass().contains("pause")) {
+            player.play();
+        }
+        //playPausePlayer();
     }
 
     private void playPrev() {
         //Cogemos la posición -1 de la canción seleccionada
-        trackPosInPlayList = trackPosInPlayList - 1;
+        //trackPosInPlayList = trackPosInPlayList - 1;
+
+        if (v.getShuffle().getStyle() == "-fx-background-color: white") {
+            trackPosInPlayList = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
+        } else {
+            trackPosInPlayList = trackPosInPlayList - 1;
+        }
 
         //If para volver al final al llegar a la posición -1
         if (trackPosInPlayList < 0) {
@@ -243,9 +288,35 @@ public class MP3PlayerController {
         v.getCurrentArtist().setText(currentTrack.getArtist());
         v.getTotalTime().setText(currentTrack.getTimeFormat());
         loadCurrentTrack();
-        v.getAudioControls().getChildren().add(v.getMedia());
+        //v.getAudioControls().getChildren().add(v.getMedia());
 
-        playPausePlayer();
+        if (v.getPlayPause().getStyleClass().contains("pause")) {
+            player.play();
+        }
+        //playPausePlayer();
+    }
+    
+        /*private void shuffleButton() {
+        //randomNum = 0 + (int)(Math.random() * songList.size() - 1);
+
+        int randomNum = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
+        if (!v.getShuffle().isDisabled()) {
+            player.setOnEndOfMedia(() -> {
+                trackPosInPlayList = randomNum;
+            });
+        }
+
+    }*/
+    
+    private void repeatButton() {
+        player.setOnEndOfMedia(() -> {
+            if(v.getRepeat().getStyle() == "-fx-background-color: white"){
+                
+            }
+            else{
+            playNext();}
+        });
+
     }
 
     private void loadCurrentTrack() {

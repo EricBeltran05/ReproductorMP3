@@ -31,7 +31,7 @@ public class PlayList {
     public PlayList(String title, List<Song> songList) {
         this.title = title;
         this.songList = songList;
-        this.playlistPath = "E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\playlists\\"+title+".json";
+        this.playlistPath = "C:\\Users\\toniO\\OneDrive\\Documentos\\NetBeansProjects\\m06-uf1-p1-reproductormp3\\src\\main\\resources\\playlists\\"+title+".json";
     }
     
     public String getTitle() {

@@ -40,7 +40,7 @@
                 <time/>
                 <songPath>audios/Like_Me_Better.mp3</songPath>
             </songList>
-            <path>E:\DAM 2\Pack 3\mp3-player-backbone\src\main\resources\playlists\All Songs.json</path>
+            <path>C:\Users\toniO\OneDrive\Documentos\NetBeansProjects\m06-uf1-p1-reproductormp3\src\main\resources\playlists\All Songs.json</path>
         </playlist>
     </playlists>
 </MP3>

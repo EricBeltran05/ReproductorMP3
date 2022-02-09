@@ -177,9 +177,11 @@ public class MP3PlayerView {
         shuffle = new Button();
         shuffle.setPrefSize(25.0, 30.0);
         shuffle.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.RANDOM, "14px"));
+        shuffle.setStyle("-fx-background-color: gray");
         repeat = new Button();
         repeat.setPrefSize(25.0, 30.0);
         repeat.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.REPEAT, "14px"));
+        repeat.setStyle("-fx-background-color: gray");
         playListControls.getChildren().addAll(shuffle, repeat);
 
         audioControls.getChildren().addAll(
