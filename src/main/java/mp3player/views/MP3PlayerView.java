@@ -2,20 +2,30 @@ package mp3player.views;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaView;
+import javafx.util.Duration;
 import mp3player.models.PlayList;
 import mp3player.models.Song;
 
@@ -57,9 +67,7 @@ public class MP3PlayerView {
     private final Button repeat;
     private MediaView media;
 
-    //MODIFICACIÓ
-    private final Label newPlayListTitle;
-    private final TextField newPlayListTitleField;
+
 
     public MP3PlayerView() {
         rootPane = new SplitPane();
@@ -90,6 +98,8 @@ public class MP3PlayerView {
                 GlyphsDude.createIcon(FontAwesomeIcon.PLUS, "9px")
         );
         addPlayList.setPrefSize(25.0, 25.0);
+
+
         deletePlayList = new Button();
         deletePlayList.setGraphic(
                 GlyphsDude.createIcon(FontAwesomeIcon.MINUS, "9px")
@@ -152,7 +162,7 @@ public class MP3PlayerView {
         slider = new Slider();
         HBox.setHgrow(slider, Priority.ALWAYS);
         slider.setId("slider");
-        //slider.autosize();
+        slider.autosize();
 
         trackTimes = new HBox(3);
         trackTimes.setAlignment(Pos.CENTER);
@@ -187,16 +197,7 @@ public class MP3PlayerView {
         );
 
         //MODIFICACIÓ
-        newPlayListTitle = new Label("New PlayList");
-        newPlayListTitle.setId("newPlayList");
-        newPlayListTitle.setVisible(false);
-        newPlayListTitle.getStyleClass().add("padding-10");
-        newPlayListTitle.setMaxHeight(61.0);
-
-        newPlayListTitleField = new TextField("");
-        newPlayListTitleField.setVisible(false);
-        newPlayListTitleField.getStyleClass().add("padding-10");
-        newPlayListTitleField.setMaxHeight(61.0);
+        //PlayListNew
     }
 
     public SplitPane getRootPane() {
@@ -325,15 +326,5 @@ public class MP3PlayerView {
 
     public void setMedia(MediaView media) {
         this.media = media;
-    }
-
-    //MODIFICACIÓ
-    public TextField setPlayListTitleField() {
-        return newPlayListTitleField;
-    }
-
-    public Label setPlayListTitle() {
-        return newPlayListTitle;
-
     }
 }

@@ -32,6 +32,17 @@ import mp3player.models.SongsListJAXB;
 import mp3player.views.MP3PlayerView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.Map;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 /**
  *
@@ -137,6 +148,9 @@ public class MP3PlayerController {
             sliderController();
         });
 
+        v.getAddPlayList().setOnAction((eh) -> {
+            createPlayList();
+        });
         //Botón newPlayList
         /*v.getAddPlayList().setOnAction((eh) -> {
             Stage ventanaPrincipal = (Stage) .getScene().getWindow();
@@ -144,14 +158,7 @@ public class MP3PlayerController {
             newPlaylist.initModality(Modality.WINDOW_MODAL);
             newPlaylist.initOwner(ventanaPrincipal);
 
-            var scene = new Scene(100, 50);
-            scene.getStylesheets().add(
-                    App.class.getClassLoader().getResource("css/MP3PlayerView.css")
-                            .toExternalForm()
-            );
-            stage.setScene(scene);
-            stage.setTitle("MP3 Player");
-            stage.show();
+
         });*/
     }
 
@@ -256,22 +263,57 @@ public class MP3PlayerController {
 
     private void createPlayList() {
 
-        v.setPlayListTitle().setVisible(true);
-        v.setPlayListTitleField().setVisible(true);
+        Stage popupwindow = new Stage();
 
-        PlayList p = new PlayList("Test PlayList", songList);
-        v.getPlayListsList().getItems().add(p);
-        for (Song so : songList) {
-            v.getTrackTable().getItems().add(so);
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("Add new PlayList!");
+
+        //MODIFICACIÓ
+        TextField newPlayListTitleField;
+        ListView<String> songListView;
+
+        Label label1 = new Label("Display a title");
+
+        Button button1 = new Button("Cancel");
+        Button btnAccept = new Button("Accept");
+
+        //NewPlayList
+        newPlayListTitleField = new TextField("");
+
+        songListView = new ListView<>();
+        songListView.autosize();
+
+        //End NewPlayList
+        button1.setOnAction(e -> popupwindow.close());
+
+        VBox layout = new VBox(10);
+
+        List<String> strings = new ArrayList<>(songList.size());
+        for (Song s : songList) {
+            strings.add(s.getTitle());
         }
-        trackPosInPlayList = 0;
-        currentTrack = songList.get(trackPosInPlayList);
-        v.getCurrentTitle().setText(currentTrack.getTitle());
-        v.getCurrentArtist().setText(currentTrack.getArtist());
-        v.getTotalTime().setText(currentTrack.getTimeFormat());
-        loadCurrentTrack();
-        v.getAudioControls().getChildren().add(v.getMedia());
+        ObservableList<String> items = FXCollections.observableArrayList(strings);
+        songListView.setItems(items);
+        songListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        songListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = songListView.getSelectionModel().getSelectedItems();
+            System.out.println(selectedItems);
+        });
+        layout.getChildren().addAll(label1, newPlayListTitleField, songListView, btnAccept, button1);
 
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene1 = new Scene(layout, 300, 250);
+        scene1.getStylesheets().add(
+                App.class.getClassLoader().getResource("css/AddPlayList.css")
+                        .toExternalForm()
+        );
+        newPlayListTitleField.setPromptText("Playlist name");
+        newPlayListTitleField.getStyleClass().add("persistent-prompt");
+        
+        popupwindow.setScene(scene1);
+
+        popupwindow.showAndWait();
     }
 
     private void deletePlayList() {
@@ -329,7 +371,7 @@ public class MP3PlayerController {
     }
 
     //
-    public static void saveSongs(AllJAXB s) {//Vale pues sí, probamos a ver si vale con un bucle aunque igual lo que pasa ahora es que se 
+    public static void saveSongs(AllJAXB s) {
         try {
             JAXBContext context = JAXBContext.newInstance(AllJAXB.class);
             Marshaller marshaller = context.createMarshaller();

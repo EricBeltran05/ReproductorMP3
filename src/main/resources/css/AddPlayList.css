@@ -1,0 +1,9 @@
+/* 
+    Author     : Eric Beltran
+*/
+.persistent-prompt:focused {
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+}
+.no-prompt {
+    -fx-prompt-text-fill: transparent !important;
+}
