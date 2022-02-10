@@ -33,7 +33,29 @@
       },
       "timeFormat": "03:17",
       "songPath": "audios/Like_Me_Better.mp3"
+    },
+    {
+      "title": "Broken Ties",
+      "genere": "Hard",
+      "artist": "The Whistlers",
+      "album": "Remix",
+      "time": {
+        "millis": 197000.0
+      },
+      "timeFormat": "03:17",
+      "songPath": "audios/Broken_Ties_The_Whistlers_Remix.mp3"
+    },
+    {
+      "title": "Where No One Goes",
+      "genere": "Folk",
+      "artist": "John Powell",
+      "album": "How to Train Your Dragon 2",
+      "time": {
+        "millis": 165000.0
+      },
+      "timeFormat": "02:45",
+      "songPath": "audios/Where_No_One_Goes.mp3"
     }
   ],
-  "playlistPath": "C:\\Users\\toniO\\OneDrive\\Documentos\\NetBeansProjects\\m06-uf1-p1-reproductormp3\\src\\main\\resources\\playlists\\All Songs.json"
+  "playlistPath": "src\\main\\resources\\playlists\\All Songs.json"
 }

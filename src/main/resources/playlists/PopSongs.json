@@ -1,0 +1,28 @@
+{
+  "title": "Pop Songs",
+  "songList": [
+    {
+      "title": "Closer",
+      "genere": "Pop",
+      "artist": "The Chainsmokers ft. Hailey",
+      "album": "Single",
+      "time": {
+        "millis": 262000.0
+      },
+      "timeFormat": "04:22",
+      "songPath": "audios/Closer.mp3"
+    },
+    {
+      "title": "Like me better",
+      "genere": "Pop",
+      "artist": "Lauv",
+      "album": "How I\u0027m feeling",
+      "time": {
+        "millis": 197000.0
+      },
+      "timeFormat": "03:17",
+      "songPath": "audios/Like_Me_Better.mp3"
+    }
+  ],
+  "playlistPath": "src\\main\\resources\\playlists\\Pop Songs.json"
+}

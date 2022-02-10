@@ -19,6 +19,18 @@
             <time/>
             <songPath>audios/Like_Me_Better.mp3</songPath>
         </song>
+        <song title="Broken Ties" artist="The Whistlers">
+            <genere>Hard</genere>
+            <album>Remix</album>
+            <time/>
+            <songPath>audios/Broken_Ties_The_Whistlers_Remix.mp3</songPath>
+        </song>
+        <song title="Where No One Goes" artist="John Powell">
+            <genere>Folk</genere>
+            <album>How to Train Your Dragon 2</album>
+            <time/>
+            <songPath>audios/Where_No_One_Goes.mp3</songPath>
+        </song>
     </songs>
     <playlists>
         <playlist title="All Songs">
@@ -40,7 +52,34 @@
                 <time/>
                 <songPath>audios/Like_Me_Better.mp3</songPath>
             </songList>
-            <path>C:\Users\toniO\OneDrive\Documentos\NetBeansProjects\m06-uf1-p1-reproductormp3\src\main\resources\playlists\All Songs.json</path>
+            <songList title="Broken Ties" artist="The Whistlers">
+                <genere>Hard</genere>
+                <album>Remix</album>
+                <time/>
+                <songPath>audios/Broken_Ties_The_Whistlers_Remix.mp3</songPath>
+            </songList>
+            <songList title="Where No One Goes" artist="John Powell">
+                <genere>Folk</genere>
+                <album>How to Train Your Dragon 2</album>
+                <time/>
+                <songPath>audios/Where_No_One_Goes.mp3</songPath>
+            </songList>
+            <path>src\main\resources\playlists\All Songs.json</path>
+        </playlist>
+        <playlist title="Pop Songs">
+            <songList title="Closer" artist="The Chainsmokers ft. Hailey">
+                <genere>Pop</genere>
+                <album>Single</album>
+                <time/>
+                <songPath>audios/Closer.mp3</songPath>
+            </songList>
+            <songList title="Like me better" artist="Lauv">
+                <genere>Pop</genere>
+                <album>How I'm feeling</album>
+                <time/>
+                <songPath>audios/Like_Me_Better.mp3</songPath>
+            </songList>
+            <path>src\main\resources\playlists\Pop Songs.json</path>
         </playlist>
     </playlists>
 </MP3>

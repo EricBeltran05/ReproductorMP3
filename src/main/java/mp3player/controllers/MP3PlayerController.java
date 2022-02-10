@@ -32,6 +32,8 @@ import mp3player.models.SongsListJAXB;
 import mp3player.views.MP3PlayerView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.FileReader;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import javafx.beans.value.ObservableValue;
@@ -53,20 +55,22 @@ public class MP3PlayerController {
 
     private MP3PlayerView v;
     private List<Song> songList;
-    private List<PlayList> playlists;
+    private List<PlayList> playList;
     private Song currentTrack;
+    private PlayList currentPlayList;
     private int trackPosInPlayList;
+    private int trackPosPlayList;
     private MediaPlayer player;
-    private static String songsXML = "E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\configuration\\songs.xml";
-    private static String partialJSON = "E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\playlists\\";
-    private static File file = new File("E:\\DAM 2\\Pack 3\\mp3-player-backbone\\src\\main\\resources\\configuration\\songs.xml");
+    private static String songsXML = "src\\main\\resources\\configuration\\songs.xml";
+    private static String partialJSON = "src\\main\\resources\\playlists\\";
+    private static File file = new File("src\\main\\resources\\configuration\\songs.xml");
 
     //MODIFICACIÓ
     PlayList pl = new PlayList();
 
     public MP3PlayerController(List<Song> songList, MP3PlayerView v) {
         this.songList = songList;
-        this.playlists = new ArrayList<>();
+        this.playList = new ArrayList<>();
         this.v = v;
         player = null;
         initView();
@@ -84,6 +88,7 @@ public class MP3PlayerController {
         for (Song s : songList) {
             v.getTrackTable().getItems().add(s);
         }
+
         trackPosInPlayList = 0;
         currentTrack = songList.get(trackPosInPlayList);
         v.getCurrentTitle().setText(currentTrack.getTitle());
@@ -93,18 +98,18 @@ public class MP3PlayerController {
         v.getAudioControls().getChildren().add(v.getMedia());
 
         //PARA EL XML
-        playlists.add(p);
-        AllJAXB todo = new AllJAXB();
-        todo.setPlayLists(playlists);
-        todo.setSongs(songList);
-        saveSongs(todo);
+        playList.add(p);
+        loadAllPlaylist();
+        v.getPlayListsList().getItems().clear();
+        v.getPlayListsList().getItems().addAll(playList);
+        saveSongs();
 
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
 
         //Generació d'un String amb format JSON
-        for (PlayList pl : playlists) {
+        for (PlayList pl : playList) {
             String jsonString = gson.toJson(pl);
 
             try {
@@ -122,16 +127,19 @@ public class MP3PlayerController {
 
     public void initController() {
 
-        v.getPlayPause().setOnAction((e) -> playPausePlayer());
-
-        sliderController();
+        v.getPlayPause().setOnAction((e) -> {
+            playPausePlayer();
+            sliderController();
+        });
 
         //v.getAddPlayList().setOnAction((eh) -> createPlayList());
         //Declaramos el TableView y recogemos la casilla seleccionada para darle una acción
         v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> {
             player.stop();
+            //player.getStatus().equals(Status.PLAYING);
             selectSong();
             sliderController();
+
         });
 
         //Le damos una acción al botón Forward
@@ -148,7 +156,7 @@ public class MP3PlayerController {
             //v.getSlider().adjustValue(0);
             sliderController();
         });
-        
+
         //Acción para el botón shuffle y cambiamos el color del boton al hacer click
         v.getShuffle().setOnAction((e) -> {
             if (v.getShuffle().getStyle() == "-fx-background-color: white") {
@@ -165,30 +173,33 @@ public class MP3PlayerController {
                 v.getRepeat().setStyle("-fx-background-color: white");
             }
         });
-        
+
         player.setOnEndOfMedia(() -> {
-            if(v.getRepeat().getStyle() == "-fx-background-color: white"){
-            player.stop();
-            player.play();
-            sliderController();
-            }else {
-            playNext();
-            //player.play();
-            sliderController();}
+            if (v.getRepeat().getStyle() == "-fx-background-color: white") {
+                player.stop();
+                player.play();
+                sliderController();
+            } else {
+                playNext();
+                //player.play();
+                sliderController();
+            }
         });
 
         v.getAddPlayList().setOnAction((eh) -> {
             createPlayList();
         });
-        //Botón newPlayList
-        /*v.getAddPlayList().setOnAction((eh) -> {
-            Stage ventanaPrincipal = (Stage) .getScene().getWindow();
-            Stage newPlaylist = new Stage();
-            newPlaylist.initModality(Modality.WINDOW_MODAL);
-            newPlaylist.initOwner(ventanaPrincipal);
 
+        v.getAddPlayList().setOnAction((eh) -> {
+            createPlayList();
+        });
+        v.getPlayListsList().getSelectionModel().selectedItemProperty().addListener((eh) -> {
+            switchPlayList();
+        });
 
-        });*/
+        v.getDeletePlayList().setOnAction((eh) -> {
+            deletePlayList();
+        });
     }
 
     private void sliderController() {
@@ -214,7 +225,16 @@ public class MP3PlayerController {
                     );
                 }
         );
+        /*
+        v.getTrackTable().getSelectionModel().selectedItemProperty().addListener((eh) -> {
 
+            System.out.println("CLICK");
+            player.stop();
+            //player.getStatus().equals(Status.PLAYING);
+            selectSong();
+            sliderController();
+
+        });*/
         v.getSlider().maxProperty().bind(Bindings.createDoubleBinding(
                 () -> player.getTotalDuration().toSeconds(),
                 player.totalDurationProperty()
@@ -243,7 +263,6 @@ public class MP3PlayerController {
     private void playNext() {
         //Cogemos la posicion +1 de la canción seleccionada
         //trackPosInPlayList = trackPosInPlayList + 1;
-        
 
         if (v.getShuffle().getStyle() == "-fx-background-color: white") {
             trackPosInPlayList = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
@@ -262,7 +281,7 @@ public class MP3PlayerController {
         loadCurrentTrack();
         //v.getAudioControls().getChildren().add(v.getMedia());
         songList.set(trackPosInPlayList, currentTrack);
-        
+
         if (v.getPlayPause().getStyleClass().contains("pause")) {
             player.play();
         }
@@ -295,8 +314,8 @@ public class MP3PlayerController {
         }
         //playPausePlayer();
     }
-    
-        /*private void shuffleButton() {
+
+    /*private void shuffleButton() {
         //randomNum = 0 + (int)(Math.random() * songList.size() - 1);
 
         int randomNum = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
@@ -307,14 +326,13 @@ public class MP3PlayerController {
         }
 
     }*/
-    
     private void repeatButton() {
         player.setOnEndOfMedia(() -> {
-            if(v.getRepeat().getStyle() == "-fx-background-color: white"){
-                
+            if (v.getRepeat().getStyle() == "-fx-background-color: white") {
+
+            } else {
+                playNext();
             }
-            else{
-            playNext();}
         });
 
     }
@@ -343,6 +361,7 @@ public class MP3PlayerController {
         TextField newPlayListTitleField;
         ListView<String> songListView;
 
+        Label help = new Label("Use Ctrl or Shift to select multiple songs");
         Label label1 = new Label("Display a title");
 
         Button button1 = new Button("Cancel");
@@ -359,18 +378,29 @@ public class MP3PlayerController {
 
         VBox layout = new VBox(10);
 
-        List<String> strings = new ArrayList<>(songList.size());
-        for (Song s : songList) {
+        List<Song> newsonglist = new ArrayList<>();
+        List<String> strings = new ArrayList<>(playList.get(0).getSongList().size());
+        for (Song s : playList.get(0).getSongList()) {
             strings.add(s.getTitle());
         }
+
         ObservableList<String> items = FXCollections.observableArrayList(strings);
         songListView.setItems(items);
         songListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         songListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
             ObservableList<String> selectedItems = songListView.getSelectionModel().getSelectedItems();
             System.out.println(selectedItems);
+            newsonglist.clear();
+            for (Song s : playList.get(0).getSongList()) {
+                for (String t : selectedItems) {
+                    if (s.getTitle().equals(t)) {
+                        newsonglist.add(s);
+                    }
+                }
+
+            }
         });
-        layout.getChildren().addAll(label1, newPlayListTitleField, songListView, btnAccept, button1);
+        layout.getChildren().addAll(label1, newPlayListTitleField, help, songListView, btnAccept, button1);
 
         layout.setAlignment(Pos.CENTER);
 
@@ -381,43 +411,147 @@ public class MP3PlayerController {
         );
         newPlayListTitleField.setPromptText("Playlist name");
         newPlayListTitleField.getStyleClass().add("persistent-prompt");
+
+        btnAccept.setOnAction(e -> {
+            PlayList p = new PlayList(newPlayListTitleField.getText(), newsonglist);
+            v.getPlayListsList().getItems().add(p);
+            playList.add(p);
+
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+            String jsonString = gson.toJson(p);
+
+            try {
+                FileWriter file = new FileWriter(partialJSON + p.getTitle().replace(" ", "") + ".json");
+                BufferedWriter out = new BufferedWriter(file);
+                out.write(jsonString);
+                out.close();
+                file.close();
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
+            saveSongs();
+            popupwindow.close();
+        });
+
+        popupwindow.setScene(scene1);
+
+        popupwindow.showAndWait();
+
+    }
+
+    private void switchPlayList() {
+        trackPosPlayList = v.getPlayListsList().getSelectionModel().getSelectedIndex();
+        currentPlayList = playList.get(trackPosPlayList);
+        v.getTrackTable().getItems().clear();
+        v.getTrackTable().getItems().addAll(currentPlayList.getSongList());
+        songList = currentPlayList.getSongList();
+
+        currentTrack = songList.get(0);
+        v.getCurrentTitle().setText(currentTrack.getTitle());
+        v.getCurrentArtist().setText(currentTrack.getArtist());
+        v.getTotalTime().setText(currentTrack.getTimeFormat());
+        loadCurrentTrack();
+        player.play();
+    }
+
+    private void deletePlayList() {
+        Stage popupwindow = new Stage();
+
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("Remove a PlayList!");
+
+        ListView<String> playListView;
+
+        Label help = new Label("Use Ctrl or Shift to select multiple playlist");
+
+        Button button1 = new Button("Cancel");
+        Button btnAccept = new Button("Accept");
+
+        playListView = new ListView<>();
+        playListView.autosize();
         
+        button1.setOnAction(e -> popupwindow.close());
+
+        VBox layout = new VBox(10);
+
+        List<PlayList> toRemove = new ArrayList<>();
+        List<String> strings = new ArrayList<>(playList.get(0).getSongList().size() - 1);
+        for (PlayList p : playList) {
+            if (!p.getTitle().equals("All Songs")) {
+                strings.add(p.getTitle());
+            }
+        }
+
+        ObservableList<String> items = FXCollections.observableArrayList(strings);
+        playListView.setItems(items);
+        playListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        playListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = playListView.getSelectionModel().getSelectedItems();
+            System.out.println(selectedItems);
+            toRemove.clear();
+            for (PlayList p : playList) {
+                for (String t : selectedItems) {
+                    if (p.getTitle().equals(t)) {
+                        toRemove.add(p);
+                    }
+                }
+
+            }
+        });
+        layout.getChildren().addAll(help, playListView, btnAccept, button1);
+
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene1 = new Scene(layout, 300, 250);
+        scene1.getStylesheets().add(
+                App.class.getClassLoader().getResource("css/AddPlayList.css")
+                        .toExternalForm()
+        );
+
+        btnAccept.setOnAction(e -> {
+            for (PlayList p : toRemove) {
+                v.getPlayListsList().getItems().remove(p);
+                playList.remove(p);
+
+                File remove = new File(partialJSON + p.getTitle().replaceAll(" ", "") + ".json");
+                remove.delete();
+
+            }
+
+            saveSongs();
+            popupwindow.close();
+        });
+
         popupwindow.setScene(scene1);
 
         popupwindow.showAndWait();
     }
 
-    private void deletePlayList() {
-        v.getDeletePlayList();
-    }
-
-    /*
-    public void saveSongs(Song s) {
-        List<Song> songList = new ArrayList<>();
-
-    }
-     */
-
- /*public PlayList loadAllPlaylist(){
-        //Creació del parser
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
-
-        //Generació d'un String amb format JSON
-        String jsonString = gson.toJson(llista.getClients());
+    public void loadAllPlaylist() {
+        Gson gson = new Gson();
+        File directorio = new File(partialJSON);
 
         try {
-            FileWriter file = new FileWriter(ARCHIVO);
-            BufferedWriter out = new BufferedWriter(file);
-            out.write(jsonString);
-            out.close();
-            file.close();
+            //Des-serialització d'un array estàtic
+            for (String f : directorio.list()) {
+                PlayList p = gson.fromJson(
+                        new FileReader(partialJSON + f),
+                        PlayList.class
+                );
+                if (!p.getTitle().equals("All Songs")) {
+
+                    playList.add(p);
+                    System.out.println(playList);
+                }
+            }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        return pl;
-    }*/
+
+    }
+
     private void selectSong() {
         trackPosInPlayList = v.getTrackTable().getSelectionModel().getSelectedIndex();
         currentTrack = songList.get(trackPosInPlayList);
@@ -425,9 +559,11 @@ public class MP3PlayerController {
         v.getCurrentArtist().setText(currentTrack.getArtist());
         v.getTotalTime().setText(currentTrack.getTimeFormat());
         loadCurrentTrack();
-        v.getAudioControls().getChildren().add(v.getMedia());
 
+        player.play();
+        v.getAudioControls().setVisible(true);
         playPausePlayer();
+
     }
 
     public static Song loadSongs() throws JAXBException {
@@ -442,14 +578,17 @@ public class MP3PlayerController {
     }
 
     //
-    public static void saveSongs(AllJAXB s) {
+    public void saveSongs() {
+        AllJAXB todo = new AllJAXB();
+        todo.setPlayLists(playList);
+        todo.setSongs(playList.get(0).getSongList());
         try {
             JAXBContext context = JAXBContext.newInstance(AllJAXB.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(s, System.out);
+            marshaller.marshal(todo, System.out);
 
-            marshaller.marshal(s, new File(songsXML));
+            marshaller.marshal(todo, new File(songsXML));
         } catch (JAXBException ex) {
             System.err.println("ERROR AMB EL SERIALITZADOR JAXB: " + ex.getMessage());
         }

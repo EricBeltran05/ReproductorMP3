@@ -68,7 +68,6 @@ public class MP3PlayerView {
     private MediaView media;
 
 
-
     public MP3PlayerView() {
         rootPane = new SplitPane();
         rootPane.setOrientation(Orientation.VERTICAL);
@@ -184,6 +183,8 @@ public class MP3PlayerView {
         repeat.setStyle("-fx-background-color: gray");
         playListControls.getChildren().addAll(shuffle, repeat);
 
+        
+        audioControls.setVisible(false);
         audioControls.getChildren().addAll(
                 trackControls,
                 currentTrack,
@@ -191,6 +192,8 @@ public class MP3PlayerView {
                 trackTimes,
                 playListControls
         );
+        
+        
 
         rootPane.getItems().addAll(playListPane, audioControls);
         //Constrain min height of bottom component binding it to paren pane

@@ -67,9 +67,27 @@ public class App extends Application {
                 Duration.seconds(197),
                 "audios/Like_Me_Better.mp3"
         );
+        Song s3 = new Song(
+                "Broken Ties",
+                "Hard",
+                "The Whistlers",
+                "Remix",
+                Duration.seconds(197),
+                "audios/Broken_Ties_The_Whistlers_Remix.mp3"
+        );
+        Song s4 = new Song(
+                "Where No One Goes",
+                "Folk",
+                "John Powell",
+                "How to Train Your Dragon 2",
+                Duration.seconds(165),
+                "audios/Where_No_One_Goes.mp3"
+        );
         lista.add(s);
         lista.add(s1);
         lista.add(s2);
+        lista.add(s3);
+        lista.add(s4);
 
         return lista;
     }
