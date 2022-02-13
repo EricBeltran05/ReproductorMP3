@@ -27,9 +27,15 @@
         </song>
         <song title="Where No One Goes" artist="John Powell">
             <genere>Folk</genere>
-            <album>How to Train Your Dragon 2</album>
+            <album>How To Train Your Dragon</album>
             <time/>
             <songPath>audios/Where_No_One_Goes.mp3</songPath>
+        </song>
+        <song title="Galway Girl" artist="Ed Sheeran">
+            <genere>Pop</genere>
+            <album>Divice</album>
+            <time/>
+            <songPath>audios/Ed Sheeran  Galway Girl Official Lyric Video.mp3</songPath>
         </song>
     </songs>
     <playlists>
@@ -60,13 +66,19 @@
             </songList>
             <songList title="Where No One Goes" artist="John Powell">
                 <genere>Folk</genere>
-                <album>How to Train Your Dragon 2</album>
+                <album>How To Train Your Dragon</album>
                 <time/>
                 <songPath>audios/Where_No_One_Goes.mp3</songPath>
             </songList>
+            <songList title="Galway Girl" artist="Ed Sheeran">
+                <genere>Pop</genere>
+                <album>Divice</album>
+                <time/>
+                <songPath>audios/Ed Sheeran  Galway Girl Official Lyric Video.mp3</songPath>
+            </songList>
             <path>src\main\resources\playlists\All Songs.json</path>
         </playlist>
-        <playlist title="Pop Songs">
+        <playlist title="Pop List">
             <songList title="Closer" artist="The Chainsmokers ft. Hailey">
                 <genere>Pop</genere>
                 <album>Single</album>
@@ -79,7 +91,7 @@
                 <time/>
                 <songPath>audios/Like_Me_Better.mp3</songPath>
             </songList>
-            <path>src\main\resources\playlists\Pop Songs.json</path>
+            <path>src\main\resources\playlists\Pop List.json</path>
         </playlist>
     </playlists>
 </MP3>

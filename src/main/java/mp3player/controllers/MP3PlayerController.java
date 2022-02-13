@@ -26,16 +26,14 @@ import javax.xml.bind.Unmarshaller;
 import mp3player.App;
 import mp3player.models.AllJAXB;
 import mp3player.models.PlayList;
-import mp3player.models.PlayListsJAXB;
 import mp3player.models.Song;
-import mp3player.models.SongsListJAXB;
 import mp3player.views.MP3PlayerView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,6 +62,7 @@ public class MP3PlayerController {
     private static String songsXML = "src\\main\\resources\\configuration\\songs.xml";
     private static String partialJSON = "src\\main\\resources\\playlists\\";
     private static File file = new File("src\\main\\resources\\configuration\\songs.xml");
+    private static String songPath = "src\\main\\resources\\audios\\";
 
     //MODIFICACIÓ
     PlayList pl = new PlayList();
@@ -182,13 +181,25 @@ public class MP3PlayerController {
         v.getAddPlayList().setOnAction((eh) -> {
             createPlayList();
         });
+
         v.getPlayListsList().getSelectionModel().selectedItemProperty().addListener((eh) -> {
+            if (player.getStatus() == player.getStatus().PLAYING) {
+                player.stop();
+            } else {
+                player.play();
+            }
             switchPlayList();
+            v.getAudioControls().setVisible(true);
         });
 
         v.getDeletePlayList().setOnAction((eh) -> {
             deletePlayList();
         });
+
+        v.getNewSong().setOnAction((eh) -> {
+            addSong();
+        });
+
     }
 
     private void sliderController() {
@@ -251,8 +262,6 @@ public class MP3PlayerController {
 
     private void playNext() {
         //Cogemos la posicion +1 de la canción seleccionada
-        //trackPosInPlayList = trackPosInPlayList + 1;
-
         if (v.getShuffle().getStyle().equals("button")) {
             trackPosInPlayList = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
         } else {
@@ -268,7 +277,6 @@ public class MP3PlayerController {
         v.getCurrentArtist().setText(currentTrack.getArtist());
         v.getTotalTime().setText(currentTrack.getTimeFormat());
         loadCurrentTrack();
-        //v.getAudioControls().getChildren().add(v.getMedia());
         songList.set(trackPosInPlayList, currentTrack);
 
         if (v.getPlayPause().getStyleClass().contains("pause")) {
@@ -296,12 +304,10 @@ public class MP3PlayerController {
         v.getCurrentArtist().setText(currentTrack.getArtist());
         v.getTotalTime().setText(currentTrack.getTimeFormat());
         loadCurrentTrack();
-        //v.getAudioControls().getChildren().add(v.getMedia());
-
+        
         if (v.getPlayPause().getStyleClass().contains("pause")) {
             player.play();
         }
-        //playPausePlayer();
     }
 
     private void loadCurrentTrack() {
@@ -311,6 +317,7 @@ public class MP3PlayerController {
                             .getResource(currentTrack.getSongPath())
                             .toURI().toString());
             player = new MediaPlayer(media);
+
             v.setMedia(new MediaView(player));
         } catch (URISyntaxException e) {
             System.err.println();
@@ -420,18 +427,28 @@ public class MP3PlayerController {
     }
 
     private void switchPlayList() {
+
         trackPosPlayList = v.getPlayListsList().getSelectionModel().getSelectedIndex();
         currentPlayList = playList.get(trackPosPlayList);
         v.getTrackTable().getItems().clear();
         v.getTrackTable().getItems().addAll(currentPlayList.getSongList());
         songList = currentPlayList.getSongList();
 
+        player.pause();
+        sliderController();
+
         currentTrack = songList.get(0);
         v.getCurrentTitle().setText(currentTrack.getTitle());
         v.getCurrentArtist().setText(currentTrack.getArtist());
         v.getTotalTime().setText(currentTrack.getTimeFormat());
+
         loadCurrentTrack();
-        player.play();
+
+        if (v.getPlayPause().getStyleClass().contains("pause")) {
+            v.getPlayPause().getStyleClass().remove("pause");
+            v.getPlayPause().getStyleClass().add("play");
+            v.getPlayPause().setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PLAY, "9px"));
+        }
     }
 
     private void deletePlayList() {
@@ -444,13 +461,13 @@ public class MP3PlayerController {
 
         Label help = new Label("Use Ctrl or Shift to select multiple playlist");
 
-        Button button1 = new Button("Cancel");
+        Button btnCancel = new Button("Cancel");
         Button btnAccept = new Button("Accept");
 
         playListView = new ListView<>();
         playListView.autosize();
 
-        button1.setOnAction(e -> popupwindow.close());
+        btnCancel.setOnAction(e -> popupwindow.close());
 
         VBox layout = new VBox(10);
 
@@ -478,7 +495,7 @@ public class MP3PlayerController {
 
             }
         });
-        layout.getChildren().addAll(help, playListView, btnAccept, button1);
+        layout.getChildren().addAll(help, playListView, btnAccept, btnCancel);
 
         layout.setAlignment(Pos.CENTER);
 
@@ -504,6 +521,136 @@ public class MP3PlayerController {
 
         popupwindow.setScene(scene1);
 
+        popupwindow.showAndWait();
+    }
+
+    public void addSong() {
+        Stage popupwindow = new Stage();
+
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("Add new songs!");
+
+        TextField title = new TextField("");
+        TextField genre = new TextField("");
+        TextField artist = new TextField("");
+        TextField album = new TextField("");
+        TextField secs = new TextField("");
+        ListView<String> songListView;
+
+        Label help = new Label("Select a new song");
+
+        Button btnCancel = new Button("Cancel");
+        Button btnAccept = new Button("Accept");
+
+        songListView = new ListView<>();
+        songListView.autosize();
+
+        btnCancel.setOnAction(e -> popupwindow.close());
+
+        VBox layout = new VBox(10);
+
+        File dir = new File(songPath);
+        File[] fileList = dir.listFiles();
+        List<String> toAdd = new ArrayList<>();
+        List<String> strings = new ArrayList<>();
+        for (File f : fileList) {
+            int existe = 0;
+            for (Song s : playList.get(0).getSongList()) {
+                if (s.getSongPath().equals("audios/" + f.getName())) {
+                    existe = 1;
+                }
+            }
+            if (existe == 0) {
+                strings.add(f.getName());
+            }
+        }
+
+        ObservableList<String> items = FXCollections.observableArrayList(strings);
+        songListView.setItems(items);
+        songListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        songListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = songListView.getSelectionModel().getSelectedItems();
+            System.out.println(selectedItems);
+            toAdd.clear();
+            for (String t : selectedItems) {
+                toAdd.add(t);
+            }
+
+        });
+
+        layout.getChildren().addAll(help, title, genre, artist, album,secs, songListView, btnAccept, btnCancel);
+
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene1 = new Scene(layout, 300, 450);
+        scene1.getStylesheets().add(
+                App.class.getClassLoader().getResource("css/AddPlayList.css")
+                        .toExternalForm()
+        );
+        title.setPromptText("Title");
+        title.getStyleClass().add("persistent-prompt");
+
+        genre.setPromptText("Genre");
+        genre.getStyleClass().add("persistent-prompt");
+
+        artist.setPromptText("Artist");
+        artist.getStyleClass().add("persistent-prompt");
+
+        album.setPromptText("Album");
+        album.getStyleClass().add("persistent-prompt");
+
+        secs.setPromptText("Time (Seconds)");
+        secs.getStyleClass().add("persistent-prompt");
+        
+        btnAccept.setOnAction(e -> {
+            for (String s : toAdd) {
+                int a = 0;
+
+                try {
+                    Media media = new Media(
+                            MP3PlayerController.class.getClassLoader()
+                                    .getResource("audios/"+s)
+                                    .toURI().toString());
+                    System.out.println(media.durationProperty());
+                    a = (int) media.getDuration().toSeconds();
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(MP3PlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println(a);
+                Song nueva = new Song(
+                        title.getText(),
+                        genre.getText(),
+                        artist.getText(),
+                        album.getText(),
+                        Duration.seconds(Integer.parseInt(secs.getText())),
+                        "audios/" + s
+                );
+                playList.get(0).getSongList().add(nueva);
+            }
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+
+            //Generació d'un String amb format JSON
+            for (PlayList pl : playList) {
+                String jsonString = gson.toJson(pl);
+
+                try {
+                    FileWriter file = new FileWriter(partialJSON + pl.getTitle().replace(" ", "") + ".json");
+                    BufferedWriter out = new BufferedWriter(file);
+                    out.write(jsonString);
+                    out.close();
+                    file.close();
+                } catch (IOException ex) {
+                    System.err.println(ex.getMessage());
+                }
+            }
+
+            saveSongs();
+            popupwindow.close();
+        });
+
+        popupwindow.setScene(scene1);
         popupwindow.showAndWait();
     }
 

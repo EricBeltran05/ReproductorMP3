@@ -66,7 +66,7 @@ public class MP3PlayerView {
     private final Button shuffle;
     private final Button repeat;
     private MediaView media;
-
+    private final Button newSong;
 
     public MP3PlayerView() {
         rootPane = new SplitPane();
@@ -91,6 +91,7 @@ public class MP3PlayerView {
         playListsControls = new HBox(2);
         playListsControls.setMaxHeight(61.0);
         playListsControls.getStyleClass().add("padding-10");
+
         addPlayList = new Button();
         addPlayList.setAlignment(Pos.CENTER);
         addPlayList.setGraphic(
@@ -98,13 +99,19 @@ public class MP3PlayerView {
         );
         addPlayList.setPrefSize(25.0, 25.0);
 
-
         deletePlayList = new Button();
         deletePlayList.setGraphic(
                 GlyphsDude.createIcon(FontAwesomeIcon.MINUS, "9px")
         );
+
+        newSong = new Button();
+        newSong.setAlignment(Pos.CENTER);
+        newSong.setGraphic(
+                GlyphsDude.createIcon(FontAwesomeIcon.MUSIC, "9px"));
+        newSong.setPrefSize(25.0, 25.0);
+        
         deletePlayList.setPrefSize(25.0, 25.0);
-        playListsControls.getChildren().addAll(addPlayList, deletePlayList);
+        playListsControls.getChildren().addAll(addPlayList, deletePlayList, newSong);
         playLists.getChildren().addAll(
                 playListsTitle, playListsList, playListsControls
         );
@@ -183,7 +190,6 @@ public class MP3PlayerView {
         repeat.setStyle("-fx-background-color: gray");
         playListControls.getChildren().addAll(shuffle, repeat);
 
-        
         audioControls.setVisible(false);
         audioControls.getChildren().addAll(
                 trackControls,
@@ -192,8 +198,6 @@ public class MP3PlayerView {
                 trackTimes,
                 playListControls
         );
-        
-        
 
         rootPane.getItems().addAll(playListPane, audioControls);
         //Constrain min height of bottom component binding it to paren pane
@@ -331,5 +335,9 @@ public class MP3PlayerView {
 
     public void setMedia(MediaView media) {
         this.media = media;
+    }
+    
+    public Button getNewSong(){
+        return newSong;
     }
 }

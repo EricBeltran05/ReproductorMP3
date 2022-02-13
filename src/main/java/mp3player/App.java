@@ -1,9 +1,15 @@
 package mp3player;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -87,8 +93,30 @@ public class App extends Application {
         lista.add(s1);
         lista.add(s2);
         lista.add(s3);
-        lista.add(s4);
-
+        //lista.add(s4);
+        //Ver si hay alguna en el fichero no manual
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        try {
+            PlayList p = gson.fromJson(
+                    new FileReader("src\\main\\resources\\playlists\\AllSongs.json"),
+                    PlayList.class
+            );
+            for(Song ext: p.getSongList()){
+                int existe = 0;
+                for(Song in: lista){
+                    if(ext.getSongPath().equals(in.getSongPath())){
+                        existe = 1;
+                    }
+                }
+                if(existe == 0){
+                    lista.add(ext);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
         return lista;
     }
 }
