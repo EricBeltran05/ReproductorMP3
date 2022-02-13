@@ -159,30 +159,19 @@ public class MP3PlayerController {
 
         //Acción para el botón shuffle y cambiamos el color del boton al hacer click
         v.getShuffle().setOnAction((e) -> {
-            if (v.getShuffle().getStyle() == "-fx-background-color: white") {
+            if (v.getShuffle().getStyle().equals("button")) {
                 v.getShuffle().setStyle("-fx-background-color: gray");
             } else {
-                v.getShuffle().setStyle("-fx-background-color: white");
+                v.getShuffle().setStyle("button");
             }
+            System.out.println(v.getShuffle().getStyle());
         });
 
         v.getRepeat().setOnAction((e) -> {
-            if (v.getRepeat().getStyle() == "-fx-background-color: white") {
+            if (v.getRepeat().getStyle().equals("button")) {
                 v.getRepeat().setStyle("-fx-background-color: gray");
             } else {
-                v.getRepeat().setStyle("-fx-background-color: white");
-            }
-        });
-
-        player.setOnEndOfMedia(() -> {
-            if (v.getRepeat().getStyle() == "-fx-background-color: white") {
-                player.stop();
-                player.play();
-                sliderController();
-            } else {
-                playNext();
-                //player.play();
-                sliderController();
+                v.getRepeat().setStyle("button");
             }
         });
 
@@ -264,7 +253,7 @@ public class MP3PlayerController {
         //Cogemos la posicion +1 de la canción seleccionada
         //trackPosInPlayList = trackPosInPlayList + 1;
 
-        if (v.getShuffle().getStyle() == "-fx-background-color: white") {
+        if (v.getShuffle().getStyle().equals("button")) {
             trackPosInPlayList = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
         } else {
             trackPosInPlayList = trackPosInPlayList + 1;
@@ -292,7 +281,7 @@ public class MP3PlayerController {
         //Cogemos la posición -1 de la canción seleccionada
         //trackPosInPlayList = trackPosInPlayList - 1;
 
-        if (v.getShuffle().getStyle() == "-fx-background-color: white") {
+        if (v.getShuffle().getStyle().equals("button")) {
             trackPosInPlayList = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
         } else {
             trackPosInPlayList = trackPosInPlayList - 1;
@@ -315,28 +304,6 @@ public class MP3PlayerController {
         //playPausePlayer();
     }
 
-    /*private void shuffleButton() {
-        //randomNum = 0 + (int)(Math.random() * songList.size() - 1);
-
-        int randomNum = ThreadLocalRandom.current().nextInt(0, songList.size() - 1 + 1);
-        if (!v.getShuffle().isDisabled()) {
-            player.setOnEndOfMedia(() -> {
-                trackPosInPlayList = randomNum;
-            });
-        }
-
-    }*/
-    private void repeatButton() {
-        player.setOnEndOfMedia(() -> {
-            if (v.getRepeat().getStyle() == "-fx-background-color: white") {
-
-            } else {
-                playNext();
-            }
-        });
-
-    }
-
     private void loadCurrentTrack() {
         try {
             Media media = new Media(
@@ -348,6 +315,17 @@ public class MP3PlayerController {
         } catch (URISyntaxException e) {
             System.err.println();
         }
+
+        player.setOnEndOfMedia(() -> {
+            if (v.getRepeat().getStyle().equals("button")) {
+                player.stop();
+                player.play();
+                sliderController();
+            } else {
+                playNext();
+                sliderController();
+            }
+        });
     }
 
     private void createPlayList() {
@@ -471,7 +449,7 @@ public class MP3PlayerController {
 
         playListView = new ListView<>();
         playListView.autosize();
-        
+
         button1.setOnAction(e -> popupwindow.close());
 
         VBox layout = new VBox(10);
